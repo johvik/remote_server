@@ -33,7 +33,12 @@
 
 	<target name="build" depends="compile">
 		<jar destfile="${build.dir}/remote_server.jar" basedir="${build.dir}"
-			includes="remote/server/**/*.class" />
+			includes="remote/server/**/*.class">
+		  <manifest>
+		    <attribute name="Main-Class" value="remote.server.ServerMain" />
+		  </manifest>
+		  <zipgroupfileset dir="lib/" includes="remote_api.jar" />
+		</jar>
 	</target>
 
 	<!-- Test and build all files -->
