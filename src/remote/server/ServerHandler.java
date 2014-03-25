@@ -29,56 +29,63 @@ public class ServerHandler implements Handler {
 
 	@Override
 	public boolean authentication(byte[] user, byte[] password) {
-		String userString = new String(user, StandardCharsets.UTF_8);
-		System.out.println("Authentication: " + userString);
-		String passwordString = new String(password, StandardCharsets.UTF_8);
+		if (gui.isActive()) {
+			String userString = new String(user, StandardCharsets.UTF_8);
+			System.out.println("Authentication: " + userString);
+			String passwordString = new String(password, StandardCharsets.UTF_8);
 
-		return userString.equals(Config.USER)
-				&& passwordString.equals(Config.PASSWORD);
+			return userString.equals(Config.USER)
+					&& passwordString.equals(Config.PASSWORD);
+		}
+		return false;
 	}
 
 	@Override
 	public synchronized void command(Command command) {
-		switch (command.getType()) {
-		case Command.MOUSE_MOVE:
-			MouseMove mm = (MouseMove) command;
-			Point p = MouseInfo.getPointerInfo().getLocation();
-			p.translate(mm.getDx(), mm.getDy());
-			robot.mouseMove(p.x, p.y);
-			break;
-		case Command.MOUSE_PRESS:
-			MousePress mp = (MousePress) command;
-			robot.mousePress(mp.getButtons());
-			break;
-		case Command.MOUSE_RELEASE:
-			MouseRelease mr = (MouseRelease) command;
-			robot.mouseRelease(mr.getButtons());
-			break;
-		case Command.MOUSE_WHEEL:
-			MouseWheel mw = (MouseWheel) command;
-			robot.mouseWheel(mw.getWheelAmt());
-			break;
-		case Command.KEY_PRESS:
-			KeyPress kp = (KeyPress) command;
-			robot.keyPress(kp.getKeycode());
-			break;
-		case Command.KEY_RELEASE:
-			KeyRelease kr = (KeyRelease) command;
-			robot.keyRelease(kr.getKeycode());
-			break;
-		case Command.TEXT_INPUT:
-			TextInput ti = (TextInput) command;
-			String text = new String(ti.getText(), StandardCharsets.UTF_8);
-			keyboard.type(text);
-			break;
-		default:
-			System.out.println("Unknown command: " + command);
+		if (gui.isActive()) {
+			switch (command.getType()) {
+			case Command.MOUSE_MOVE:
+				MouseMove mm = (MouseMove) command;
+				Point p = MouseInfo.getPointerInfo().getLocation();
+				p.translate(mm.getDx(), mm.getDy());
+				robot.mouseMove(p.x, p.y);
+				break;
+			case Command.MOUSE_PRESS:
+				MousePress mp = (MousePress) command;
+				robot.mousePress(mp.getButtons());
+				break;
+			case Command.MOUSE_RELEASE:
+				MouseRelease mr = (MouseRelease) command;
+				robot.mouseRelease(mr.getButtons());
+				break;
+			case Command.MOUSE_WHEEL:
+				MouseWheel mw = (MouseWheel) command;
+				robot.mouseWheel(mw.getWheelAmt());
+				break;
+			case Command.KEY_PRESS:
+				KeyPress kp = (KeyPress) command;
+				robot.keyPress(kp.getKeycode());
+				break;
+			case Command.KEY_RELEASE:
+				KeyRelease kr = (KeyRelease) command;
+				robot.keyRelease(kr.getKeycode());
+				break;
+			case Command.TEXT_INPUT:
+				TextInput ti = (TextInput) command;
+				String text = new String(ti.getText(), StandardCharsets.UTF_8);
+				keyboard.type(text);
+				break;
+			default:
+				System.out.println("Unknown command: " + command);
+			}
 		}
 	}
 
 	@Override
 	public synchronized void terminate(boolean shutdown) {
-		System.out.println("Terminate: " + shutdown);
-		gui.exit();
+		if (gui.isActive()) {
+			System.out.println("Terminate: " + shutdown);
+			gui.exit();
+		}
 	}
 }

@@ -14,22 +14,20 @@ import javax.swing.ImageIcon;
 
 public class ServerGui {
 	enum GuiState {
-		ACTIVE, PAUSED, WAITING
+		ACTIVE, PAUSED
 	};
 
 	private final Image activeImage;
 	private final Image pausedImage;
-	private final Image waitingImage;
 	private final SystemTray tray = SystemTray.getSystemTray();
 	private final TrayIcon trayIcon;
 
-	private GuiState state = GuiState.WAITING;
+	private GuiState state = GuiState.ACTIVE;
 
 	public ServerGui() {
 		activeImage = find("res/active.png", "Active").getImage();
 		pausedImage = find("res/paused.png", "Paused").getImage();
-		waitingImage = find("res/waiting.png", "Waiting").getImage();
-		trayIcon = new TrayIcon(waitingImage, "Remote control");
+		trayIcon = new TrayIcon(activeImage, "Remote control");
 	}
 
 	private ImageIcon find(String path, String description) {
@@ -68,20 +66,13 @@ public class ServerGui {
 		trayIcon.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// Dummy state transition
-				switch (state) {
-				case ACTIVE:
-					trayIcon.setImage(pausedImage);
-					state = GuiState.PAUSED;
-					break;
-				case PAUSED:
-					trayIcon.setImage(waitingImage);
-					state = GuiState.WAITING;
-					break;
-				case WAITING:
-					trayIcon.setImage(activeImage);
+				// Pause/unpause
+				if (state == GuiState.PAUSED) {
 					state = GuiState.ACTIVE;
-					break;
+					trayIcon.setImage(activeImage);
+				} else {
+					state = GuiState.PAUSED;
+					trayIcon.setImage(pausedImage);
 				}
 			}
 		});
@@ -92,6 +83,10 @@ public class ServerGui {
 				exit();
 			}
 		});
+	}
+
+	public boolean isActive() {
+		return state == GuiState.ACTIVE;
 	}
 
 	public void exit() {
