@@ -37,6 +37,7 @@
 		  <manifest>
 		    <attribute name="Main-Class" value="remote.server.ServerMain" />
 		  </manifest>
+		  <zipfileset dir="res/" prefix="res/" />
 		  <zipgroupfileset dir="lib/" includes="remote_api.jar" />
 		</jar>
 	</target>

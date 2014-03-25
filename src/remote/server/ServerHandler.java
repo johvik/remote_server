@@ -17,10 +17,12 @@ import remote.api.commands.MouseWheel;
 import remote.api.commands.TextInput;
 
 public class ServerHandler implements Handler {
+	private ServerGui gui;
 	private Robot robot;
 	private Keyboard keyboard;
 
-	public ServerHandler() throws AWTException {
+	public ServerHandler(ServerGui gui) throws AWTException {
+		this.gui = gui;
 		robot = new Robot();
 		keyboard = new Keyboard(robot);
 	}
@@ -77,6 +79,6 @@ public class ServerHandler implements Handler {
 	@Override
 	public synchronized void terminate(boolean shutdown) {
 		System.out.println("Terminate: " + shutdown);
-		ServerMain.exit();
+		gui.exit();
 	}
 }
